@@ -1,0 +1,21 @@
+var ROI =ee.FeatureCollection(ROI)
+Map.centerObject(ROI, 8)
+Map.addLayer(ROI)
+var image=S2.filterBounds(ROI)
+  .filterDate("2019-01-01","2021-01-30").median()
+
+//ndvi calculation
+    var NDVI_Method1=image.normalizedDifference(['B8','B4']);
+   var NDVI1 =NDVI_Method1.clip(ROI)
+   Map.addLayer(NDVI1,{min:-1,max:1,palette:['white','green','red']},'NDVI');
+   Map.centerObject(ROI,8)
+    Map.addLayer(NDVI1)
+    Export.image.toDrive({
+  image: NDVI1,
+  description: 'ndvi_calculation',
+  folder: 'ndvi_calculation',
+  region: ROI,
+  scale: 1000,
+  crs: 'EPSG:4326',
+  maxPixels: 1e10});
+//supervised classification
